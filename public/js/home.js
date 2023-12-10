@@ -1,6 +1,7 @@
 const urlBase = 'https://worldender.vercel.app/api'
 //const urlBase = 'http://localhost:4000/api'
 const resultadoModal = new bootstrap.Modal(document.getElementById("modalMensagem"))
+const noticiaModal = new bootstrap.Modal(document.getElementById("modalNoticia"))
 const access_token = localStorage.getItem("token") || null
 
 async function carregaNoticias() {
@@ -24,7 +25,7 @@ async function carregaNoticias() {
                     <h5 class="card-title">${noticia.titulo}</h5>
                     <h6 class="card-subtitle mb-2 text-body-secondary">Autor: ${noticia.autor}</h6>
                     <p class="card-text">${noticia.descricao}</p>
-                    <a href="#" class="btn btn-danger">Ler Notícia</a>
+                    <a href="#" class="btn btn-danger" onclick='buscaNoticia("${noticia._id}")'>Ler Notícia</a>
                     </div>
                 </div>
                 `
@@ -44,15 +45,27 @@ async function buscaNoticiaPeloId(id) {
         }
     })
         .then(response => response.json())
-        .then(data => {
+        .then(data => { 
+            
             if (data[0]) { //Iremos pegar os dados e colocar na página.
-                document.getElementById('id').value = data[0]._id
-                document.getElementById('titulo').value = data[0].titulo,
-                document.getElementById('autor').value = data[0].autor,
-                document.getElementById('descricao').value = data[0].descricao,
-                document.getElementById('conteudo').value = data[0].conteudo,
-                document.getElementById('data').value = data[0].data,
-                document.getElementById('capa').value = data[0].capa
+                noticiaModal.innerHTML = `
+                <div class="cabecalho">
+                    <img class="card-img-top" id="capa" src="${data[0].capa}" alt="Capa da noticia">
+                </div>
+              <div class="body">
+                <h5 class="card-title" id="titulo">${data[0].titulo}</h5>
+                <p id="descricao">${data[0].descricao}</p>
+                <p id="conteudo">${data[0].conteudo}</p>
+        
+              </div>
+              <div class="footer">
+                <span>Postado em: </span><span id="data">${data[0].data}</span>
+                <span>Autoria: </span><span id="autor">${data[0].autor}</span>
+        
+              </div>
+              `
+            
+            noticiaModal.show()
             }
         })
         .catch(error => {
